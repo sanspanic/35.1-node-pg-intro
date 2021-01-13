@@ -40,4 +40,40 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.put("/:code", async (req, res, next) => {
+  try {
+    const { code } = req.params;
+    const { name, description } = req.body;
+    const results = await db.query(
+      "UPDATE companies SET name=$1, description=$2 WHERE code=$3 RETURNING code, name, description",
+      [name, description, code]
+    );
+    if (results.rows.length === 0) {
+      throw new ExpressError(`Can't find company with code of ${code}`, 404);
+    }
+    return res.send({ company: results.rows[0] });
+  } catch (e) {
+    return next(e);
+  }
+});
+
+router.delete("/:code", async (req, res, next) => {
+  try {
+    const { code } = req.params;
+    const results = await db.query(
+      `DELETE FROM companies WHERE code=$1 RETURNING *`,
+      [code]
+    );
+    if (results.rows.length === 0) {
+      throw new ExpressError(
+        `Can't find and delete company with code of ${code}`,
+        404
+      );
+    }
+    return res.send({ status: "deleted" });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 module.exports = router;

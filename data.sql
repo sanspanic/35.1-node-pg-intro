@@ -51,18 +51,18 @@ CREATE TABLE invoices
   VALUES
     ('accn', 'accounting'),
     ('tech', 'technology'),
-    ('advt', 'advertising')
+    ('advt', 'advertising');
 
 
   CREATE TABLE industries_companies
   (
     code TEXT NOT NULL REFERENCES companies,
-    ind_id INTEGER NOT NULL REFERENCES industries,
-    PRIMARY KEY(code, ind_code)
+    id INTEGER NOT NULL REFERENCES industries,
+    PRIMARY KEY(code, id)
   );
 
   INSERT INTO industries_companies
   VALUES
-    ('apple', 'tech'),
-    ('ibm', 'tech'),
-    ('ibm', 'accn');
+    ('apple', 2),
+    ('ibm', 2),
+    ('ibm', 1);

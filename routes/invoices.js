@@ -41,14 +41,27 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { amt } = req.body;
+    const { amt, paid } = req.body;
+    //get status of paid
+    let isPaid = await db.query("SELECT paid FROM invoices WHERE id=$1", [id]);
+    isPaid = isPaid.rows[0].paid;
+    //if invoice hasn't been paid yet and user input paid is true, update date & paid
+    if (!isPaid && paid === true) {
+      const today = new Date();
+      const updateDate = await db.query(
+        "UPDATE invoices SET paid=$1, paid_date=$2 WHERE id=$3 RETURNING *",
+        [paid, today, id]
+      );
+    }
+    //update amount
     const results = await db.query(
-      "UPDATE invoices SET amt=$1  WHERE id=$2 RETURNING *",
+      "UPDATE invoices SET amt=$1 WHERE id=$2 RETURNING *",
       [amt, id]
     );
     if (results.rows.length === 0) {
       throw new ExpressError(`Can't find invoice with id of ${id}`, 404);
     }
+
     return res.send({ invoice: results.rows[0] });
   } catch (e) {
     return next(e);

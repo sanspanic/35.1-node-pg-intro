@@ -38,3 +38,31 @@ CREATE TABLE invoices
     ('apple', 200, false, null),
     ('apple', 300, true, '2018-01-01'),
     ('ibm', 400, false, null);
+
+  CREATE TABLE industries
+  (
+    id serial PRIMARY KEY,
+    ind_code text NOT NULL,
+    name text NOT NULL
+  );
+
+  INSERT INTO industries
+    (ind_code, name)
+  VALUES
+    ('accn', 'accounting'),
+    ('tech', 'technology'),
+    ('advt', 'advertising')
+
+
+  CREATE TABLE industries_companies
+  (
+    code TEXT NOT NULL REFERENCES companies,
+    ind_id INTEGER NOT NULL REFERENCES industries,
+    PRIMARY KEY(code, ind_code)
+  );
+
+  INSERT INTO industries_companies
+  VALUES
+    ('apple', 'tech'),
+    ('ibm', 'tech'),
+    ('ibm', 'accn');
